@@ -1,0 +1,24 @@
+﻿@model UI.Web.Models.App.AppPageModel
+
+@{
+    ViewBag.Title = Model.AppPage.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section head{
+    <link href="/assets/vendor/froala/css/froala_editor.pkgd.min.css" rel="stylesheet" />
+    <link href="/assets/vendor/froala/css/froala_style.min.css" rel="stylesheet" />
+
+    <meta name="keywords" content="@Model.AppPage.SeoKeywords" />
+    <meta name="description" content="@Model.AppPage.SeoDescription">
+}
+
+
+@if (!Model.AppPage.IsAdvancedPageContent)
+{
+    @Html.Raw(Model.AppPage.PageHeader)
+}
+
+<div class="fr-element fr-view">
+    @Html.Raw(Model.AppPage.PageContent)
+</div>

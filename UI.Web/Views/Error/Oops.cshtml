@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Oops";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section head{
+    <link href="/assets/css/loader.css" rel="stylesheet" />
+}
+
+<div class="main-container container pt-80 pb-80" id="main-container">
+    <!-- post content -->
+    <div class="blog__content mb-72">
+        <div class="container text-center">
+            <h1 class="page-404-number">Oops</h1>
+            <h2>Gemi Karaya Oturdu</h2>
+            <p>Merak Etmeyin! Kaptana Haber Verildi.</p>
+            <p>Üst menüden farklı sayfalara gözatabilir veya anasayfaya geri dönebilirsiniz.</p>
+
+            <div class="row justify-content-center mt-40">
+
+                <div class="col-md-6">
+                    <!-- Search form -->
+                    <form role="search" method="get" class="search-form relative" action="/Haber" onsubmit="return global.checkSearch(this)">
+                        <input type="search" class="widget-search-input mb-0" name="q" placeholder="Bi Haber Ara" required="required">
+                        <button type="submit" class="widget-search-button btn btn-color"><i class="ui-search widget-search-icon"></i></button>
+                    </form>
+
+                    <!-- Back to home -->
+                    <a href="/" class="btn btn-lg btn-color mt-40"><span>Anasayfaya Dön</span></a>
+                </div>
+
+            </div>
+            <!-- end row -->
+
+        </div>
+        <!-- end container -->
+    </div>
+    <!-- end post content -->
+</div>
+<!-- end main container -->
+
+@section bottomJS{
+    <script>
+        $(document).ready(function () {
+            Log.URLError();
+        });
+    </script>
+}

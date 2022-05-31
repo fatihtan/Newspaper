@@ -1,0 +1,51 @@
+﻿@using Sky.CMS.DTO
+
+@{
+    List<Navigation> NavigationList = ViewBag.NavigationList;
+}
+
+<li>
+    <a class="sidenav__menu-url text-center" href="/">
+        <img src="/assets/content/img/bihaberver-700x291.png" class="width-50-percent" alt="Bi Haber Ver | Türkiye'nin Robotlarla Yönetilen İlk Haber Sitesi" width="100%" height="100%" />
+    </a>
+</li>
+@helper displayNested(List<Navigation> list)
+{
+    foreach (Navigation item in list)
+    {
+        if (item.IsDeleted)
+        {
+            continue;
+        }
+
+        if (item.ChildrenList.Any())
+        {
+            <li>
+
+                <a href="@item.Link" class="sidenav__menu-url">@item.Title</a>
+                <button class="sidenav__menu-toggle" aria-haspopup="true" aria-label="Open dropdown"><i class="ui-arrow-down"></i></button>
+                <ul class="sidenav__menu-dropdown">
+                    @foreach (var sub in item.ChildrenList)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            continue;
+                        }
+                        sub.IsDeleted = true;
+                        
+                        <li><a href="@sub.Link" class="sidenav__menu-url">@sub.Title</a></li>
+                    }
+                </ul>
+
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="@item.Link" class="sidenav__menu-url">@item.Title</a>
+            </li>
+        }
+    }
+}
+
+@displayNested(NavigationList)

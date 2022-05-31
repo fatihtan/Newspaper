@@ -1,0 +1,35 @@
+﻿<!-- Widget Newsletter -->
+<aside class="widget widget_mc4wp_form_widget">
+    <h4 class="widget-title">BÜLTEN</h4>
+    <p class="newsletter__text">
+        <i class="ui-email newsletter__icon"></i>
+        Şimdiye kadar 50000 den fazla kişinin katıldığı bu listeden dilediğiniz zaman ayrılabilirsiniz.
+    </p>
+
+    @using (Ajax.BeginForm("SubscribeSaveAjax", "Home",
+    new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        OnBegin =   "Generic.SubscribeSaveAjaxBegin",
+        OnSuccess = "Generic.SubscribeSaveAjaxSuccess",
+        OnFailure = "Generic.SubscribeSaveAjaxFailure"
+    }, new
+    {
+        @class = "mc4wp-form",
+        id = "subscribe-form"
+    }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="mc4wp-form-fields">
+            <div class="form-group">
+                <input type="email" name="email" id="subscribe_email" placeholder="Email" required="required" />
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-lg btn-color" value="KAYDET" />
+            </div>
+        </div>
+    }
+</aside>
+<!-- end widget newsletter -->
+

@@ -1,0 +1,26 @@
+﻿#head-lines .owl-dots {
+    margin: 0px;
+    background: white;
+}
+
+    #head-lines .owl-dots .owl-dot span {
+        height: 40px;
+        width: 40px;
+        line-height: 40px;
+        background: black;
+        color: white;
+        font-weight: bold;
+    }
+
+.no-shadow {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.pt-0 {
+    padding-bottom: 0px !important;
+}
+
+.owl-stage-outer {
+    background: white;
+}

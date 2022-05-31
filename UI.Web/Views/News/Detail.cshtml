@@ -1,0 +1,491 @@
+﻿@using Sky.Common.DTO
+@using Sky.CMS.Services
+@using Sky.Common.Utilities
+@using UI.Web.Infrastructure
+
+@model UI.Web.Models.News.NewsModel
+
+@{
+    string NewsTitle = Model.News.Title;
+
+    ViewBag.Title = NewsTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string CategoryURL = string.Format("/Haber/Kategori/{0}", SeoURLUtility.Convert(Model.News.CategoryID, Model.News.CategoryName));
+
+    string NewsURL = string.Format("/Haber/{0}", SeoURLUtility.Convert(Model.News.ID, Model.News.Title));
+    string ThisWebsiteBaseURL = System.Configuration.ConfigurationManager.AppSettings["ThisWebsiteBaseURL"];
+
+    string ShareURL = string.Format("{0}{1}", ThisWebsiteBaseURL, NewsURL);
+
+    string TwitterAccountName = "@BirHaberVer";
+
+    System.Text.StringBuilder Keywords = new System.Text.StringBuilder();
+    string[] titleParts = NewsTitle.ToString().Split(' ');
+    foreach (string item in titleParts)
+    {
+        Keywords.Append(string.Format("{0}, ", item));
+    }
+
+    string Description = Model.News.Description;
+    if (string.IsNullOrEmpty(Model.News.Description))
+    {
+        HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+        document.LoadHtml(Model.News.NewsContent);
+        Description = document.DocumentNode.InnerText;
+    }
+}
+
+@section head{
+
+    @if (!Request.Url.PathAndQuery.Equals(NewsURL))
+    {
+    <link rel="canonical" href="@ShareURL" />        
+    }
+    <!--@Request.Url.PathAndQuery-->
+    <!--@NewsURL-->
+
+    <link href="/assets/css/toastr.min.css" rel="stylesheet" />
+    <link href="/assets/css/loader.css" rel="stylesheet" />
+
+    <meta name="description" content="@Description" />
+    <meta name="keywords" content="@Keywords" />
+    <meta name="news_keywords" content="@Keywords" />
+    <meta itemprop="dateCreated" content="@Model.News.CreatedAt.ToString()" />
+    <meta itemprop="dateModified" content="@Model.News.CreatedAt.ToString()" />
+
+    <link rel="image_src" href="@Model.News.ImageURL" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="@Model.News.ImageURL" />
+    <meta name="twitter:site" content="@TwitterAccountName" />
+    <meta name="twitter:title" content="@NewsTitle">
+    <meta name="twitter:description" content="@Description">
+
+    <meta property="og:site_name" content="Bi Haber Ver" />
+    <meta property="og:title" content="@NewsTitle" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="@ShareURL" />
+    <meta property="og:description" content="@Description" />
+    <meta property="og:image" content="@Model.News.ImageURL" />
+}
+
+<!-- Breadcrumbs -->
+<div class="container">
+    <ul class="breadcrumbs">
+        <li class="breadcrumbs__item">
+            <a href="/" class="breadcrumbs__url">Anasayfa</a>
+        </li>
+        <li class="breadcrumbs__item">
+            <a href="@CategoryURL" class="breadcrumbs__url">@Model.News.CategoryName</a>
+        </li>
+        <li class="breadcrumbs__item breadcrumbs__item--current">@NewsTitle</li>
+    </ul>
+</div>
+
+<div class="main-container container" id="main-container">
+
+    <!-- Content -->
+    <div class="row">
+
+        <!-- post content -->
+        <div class="col-lg-8 blog__content mb-72">
+            <div class="content-box">
+
+                <!-- standard post -->
+                <article class="entry mb-0">
+
+                    <div class="single-post__entry-header entry__header">
+                        <a href="@CategoryURL" class="entry__meta-category entry__meta-category--label entry__meta-category--green">@Model.News.CategoryName</a>
+                        <h1 class="single-post__entry-title">@NewsTitle</h1>
+
+                        <div class="entry__meta-holder">
+                            <ul class="entry__meta">
+                                <li class="entry__meta-date">@Model.News.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", Settings.TurkishCultureInfo)</li>
+                            </ul>
+
+                            <ul class="entry__meta">
+                                <li class="entry__meta-views">
+                                    <i class="ui-eye"></i>
+                                    <span>@Model.TotalViews</span>
+                                </li>
+                                <li class="entry__meta-comments">
+                                    <a href="#comments">
+                                        <i class="ui-chat-empty"></i>@Model.CommentList.Count
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- end entry header -->
+
+                    <div class="entry__img-holder">
+                        @if (string.IsNullOrEmpty(Model.News.NewsContent))
+                        {
+                            <img src="@Model.News.ImageURL" alt="@NewsTitle" title="@NewsTitle" class="entry__img" />
+                        }
+
+                    </div>
+
+                    <div class="entry__article-wrap">
+
+                        <!-- Share -->
+                        <div class="entry__share" style="width: 54px;">
+                            <div class="sticky-col">
+                                <div class="socials socials--rounded socials--large">
+                                    <a class="social social-facebook" href="javascript:"
+                                        onclick="ShareOnFacebook('@string.Format("{0}?utm_source=facebook", ShareURL)')" 
+                                        title="facebook" aria-label="facebook">
+                                        <i class="ui-facebook"></i>
+                                    </a>
+                                    <a class="social social-twitter" href="javascript:"
+                                        onclick="ShareOnTwitter('@string.Format("{0}?utm_source=twitter", ShareURL)', 'tr', 'BirHaberVer', '@(NewsTitle.ToString().Replace("'", "’"))\n', '@Model.News.CategoryName');"
+                                        title="twitter" aria-label="twitter">
+                                        <i class="ui-twitter"></i>
+                                    </a>
+                                    <a class="social social-linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=@(Server.UrlEncode(string.Format("{0}?utm_source=linkedin", ShareURL)))" 
+                                        title="linkedin" target="_blank" aria-label="linkedin" rel="noreferrer">
+                                        <i class="ui-linkedin"></i>
+                                    </a>
+                                    <a class="social social-pinterest" href="https://pinterest.com/pin/create/button/?url=@(Server.UrlEncode(string.Format("{0}?utm_source=pinterest", ShareURL)))" 
+                                        title="pinterest" target="_blank" aria-label="pinterest" rel="noreferrer">
+                                        <i class="ui-pinterest"></i>
+                                    </a>
+                                    <a class="social social-whatsapp" href="https://api.whatsapp.com/send?text=@(Server.UrlEncode(string.Format("{0}?utm_source=whatsapp", ShareURL)))" 
+                                        title="whatsapp" target="_blank" aria-label="whatsapp" rel="noreferrer">
+                                        <i class="ui-whatsapp"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- share -->
+
+                        <div class="entry__article">
+
+                            <p>
+                                @Html.Raw(Model.News.Description)
+                            </p>
+
+                            @if (!string.IsNullOrEmpty(Model.News.NewsContent))
+                            {
+                                @Html.Raw(Model.News.NewsContent)
+                            }
+
+                            <script charset="utf-8">
+                                var nodeList = document.querySelectorAll('.entry__article img');
+                                for (var i = 0; i < nodeList.length; i++) {
+                                    if (nodeList[i].alt == '') {
+                                        nodeList[i].alt = '@NewsTitle';
+                                    }
+
+                                    if (nodeList[i].attributes.height == undefined) {
+                                        nodeList[i].setAttribute('height', nodeList[i].height);
+                                    }
+
+                                    if (nodeList[i].attributes.width == undefined) {
+                                        nodeList[i].setAttribute('width', nodeList[i].width);
+                                    }
+                                }
+                            </script>
+                            @if (!string.IsNullOrEmpty(Model.News.Link))
+                            {
+                                //string qs = string.Format("surl={0}&turl={1}&rid={2}",
+                                //    Server.UrlEncode(Request.Url.AbsoluteUri),
+                                //    Server.UrlEncode(Model.News.Link),
+                                //    Model.News.ID);
+                                
+                                <p class="continue-to-read">
+                                    Haberin devamını okumak için 
+                                    <a 
+                                        class="log-redirect"
+                                        data-surl="@Server.UrlEncode(Request.Url.AbsoluteUri)"
+                                        data-turl="@Server.UrlEncode(Model.News.Link)"
+                                        data-rid="@Model.News.ID"
+                                        target="_blank" 
+                                        href="@Model.News.Link"
+                                        rel="noreferrer">tıklayınız
+                                    </a>
+                                </p>
+                            }
+
+
+                            @if (Model.News.ChannelID.HasValue)
+                            {
+                                <div class="final-review">
+                                    <div class="final-review__text-holder">
+                                        <p class="final-review__title">Kaynak: @TypeService.GetNameByValue((TK.TKChannel)Model.News.ChannelID)</p>
+                                    </div>
+                                </div>
+                            }
+
+                            @*<!-- tags -->
+                            <div class="entry__tags">
+                                <i class="ui-tags"></i>
+                                <span class="entry__tags-label">Tags:</span>
+                                <a href="#" rel="tag">mobile</a><a href="#" rel="tag">gadgets</a><a href="#" rel="tag">satelite</a>
+                            </div>
+                            <!-- end tags -->*@
+
+                        </div>
+                        <!-- end entry article -->
+                    </div>
+                    <!-- end entry article wrap -->
+
+                    <!-- Prev / Next Post -->
+                    <nav class="entry-navigation hidden" id="container-prev-next">
+                        <div class="clearfix">
+                            <div class="entry-navigation--left" id="container-prev">
+                                <i class="ui-arrow-left"></i>
+                                <span class="entry-navigation__label">Önceki Haber</span>
+                                <div class="entry-navigation__link">
+                                    <a href="" rel="prev" id="a-prev"></a>
+                                </div>
+                            </div>
+                            <div class="entry-navigation--right" id="container-next">
+                                <span class="entry-navigation__label">Sonraki Haber</span>
+                                <i class="ui-arrow-right"></i>
+                                <div class="entry-navigation__link">
+                                    <a href="" rel="next" id="a-next"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <!-- Related Posts -->
+                    <section class="section related-posts mt-40 mb-0">
+                        <div class="title-wrap title-wrap--line title-wrap--pr">
+                            <h2 class="section-title">İLGİLİ HABERLER</h2>
+                        </div>
+
+                        <div id="owl-posts-3-items" class="owl-carousel owl-theme owl-carousel--arrows-outside">
+                            @foreach (var item in Model.RelatedNewsSlider)
+                            {
+                                string url = string.Format("/Haber/{0}", SeoURLUtility.Convert(item.ID, item.Title));
+                                string title = item.Title;
+                                
+                                <article class="entry thumb thumb--size-1">
+                                    <div class="entry__img-holder thumb__img-holder" style="background-image: url(@item.ImageURL);">
+                                        <div class="bottom-gradient"></div>
+                                        <div class="thumb-text-holder">
+                                            <h2 class="thumb-entry-title">
+                                                <a href="@url">@title</a>
+                                            </h2>
+                                        </div>
+                                        <a href="@url" title="@title" class="thumb-url"></a>
+                                    </div>
+                                </article>
+                            }
+                        </div>
+                    </section>
+                    <!-- end related posts -->
+                </article>
+                <!-- end standard post -->
+
+                <div class="entry-comments" id="comments">
+
+                    <div class="title-wrap title-wrap--line">
+                        @if (Model.CommentList.Any())
+                        {
+                            <h2 class="section-title">@Model.CommentList.Count Yorum Yapıldı</h2>
+                        }
+                        else
+                        {
+                            <h2 class="section-title">İLK YORUMU SEN YAP</h2>
+                        }
+                    </div>
+
+                    <ul class="comment-list">
+                        @foreach (var item in Model.CommentList)
+                        {
+                            <li class="comment">
+                                <div class="comment-body">
+                                    <div class="comment-avatar">
+                                        <img alt="@Model.News.Title" src="/assets/content/img/gender_none.png" style="width:50px;" />
+                                    </div>
+                                    <div class="comment-text">
+                                        <h6 class="comment-author">@item.FullName</h6>
+                                        <div class="comment-metadata pull-right">
+                                            <a title="@item.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")" class="comment-date">@item.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</a>
+                                        </div>
+                                        <p>@item.CommentContent</p>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                </div>
+
+
+                <!-- Comment Form -->
+                <div id="respond" class="comment-respond">
+                    <div class="title-wrap">
+                        <p class="comment-respond__title section-title">BİR YORUM BIRAK</p>
+                    </div>
+                    @using (Ajax.BeginForm("CommentSaveAjax", "News",
+                    new AjaxOptions()
+                    {
+                        HttpMethod = "POST",
+                        OnBegin = "News.CommentSaveAjaxBegin",
+                        OnSuccess = "News.CommentSaveAjaxSuccess",
+                        OnFailure = "News.CommentSaveAjaxFailure"
+                    }, new
+                    {
+                        @class = "mc4wp-form",
+                        id = "subscribe-form"
+                    }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="NewsID" value="@Model.News.ID" />
+                            
+                        <div class="row row-20">
+                            <div class="col-lg-6">
+                                <label for="fullname">Ad Soyad *</label>
+                                <input name="FullName" id="fullname" type="text" maxlength="100" required="required" />
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="email">Email *</label>
+                                <input name="Email" id="email" type="email" maxlength="50" required="required" />
+                            </div>
+                        </div>
+
+                        <p class="comment-form-comment">
+                            <label for="commentcontent">Yorum *</label>
+                            <textarea id="commentcontent" name="CommentContent" rows="5" required="required"></textarea>
+                        </p>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="captcha">
+                                    <div class="captcha-image">
+                                        <img id="captcha-image" src="/Captcha/Get" alt="Captcha Code" width="100%" height="100%" />
+                                    </div>
+                                    <div class="captcha-refresh">
+                                        <a href="javascrpipt:;" onclick="reloadCaptcha()" title="Yenile">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                <path d="M9 12l-4.463 4.969-4.537-4.969h3c0-4.97 4.03-9 9-9 2.395 0 4.565.942 6.179 2.468l-2.004 2.231c-1.081-1.05-2.553-1.699-4.175-1.699-3.309 0-6 2.691-6 6h3zm10.463-4.969l-4.463 4.969h3c0 3.309-2.691 6-6 6-1.623 0-3.094-.65-4.175-1.699l-2.004 2.231c1.613 1.526 3.784 2.468 6.179 2.468 4.97 0 9-4.03 9-9h3l-4.537-4.969z" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="captchacode">
+                                    Güvenlik Kodu
+                                    <abbr title="Zorunlu" class="required">*</abbr>
+                                </label>
+                                <input name="CaptchaCode" autocomplete="off" id="captchacode" type="text" required="required" />
+                            </div>
+                        </div>
+
+                        <p class="comment-form-submit">
+                            <input type="submit" class="btn btn-lg btn-color btn-button" value="GÖNDER" id="submit-message" />
+                        </p>
+                    }
+                </div>
+                <!-- end comment form -->
+
+            </div>
+            <!-- end content box -->
+        </div>
+        <!-- end post content -->
+
+        <!-- Sidebar -->
+        <aside class="col-lg-4 sidebar sidebar--right">
+
+            <aside class="widget widget-rating-posts">
+                <h3 class="widget-title">ÖNE ÇIKANLAR</h3>
+
+                @{
+                    var firstRelatedForBig = Model.RelatedNewsRightBig.FirstOrDefault();
+                }
+                @foreach (var item in Model.RelatedNewsRightBig)
+                {
+                    string url = string.Format("/Haber/{0}", SeoURLUtility.Convert(item.ID, item.Title));
+
+                    <article class="entry">
+                        <div class="entry__img-holder">
+                            <a href="@url">
+                                <div class="thumb-container thumb-60">
+                                    <img data-src="@item.ImageURL" src="@item.ImageURL" class="entry__img lazyload" alt="@item.Title" title="@item.Title" />
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="entry__body">
+                            <div class="entry__header">
+
+                                <h2 class="entry__title">
+                                    <a href="@url">@item.Title</a>
+                                </h2>
+                                <ul class="entry__meta">
+                                    <li class="entry__meta-date">@item.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", Settings.TurkishCultureInfo)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        @if (firstRelatedForBig == item)
+                        {
+                            <hr />
+                        }
+                    </article>
+                }
+
+            </aside>
+
+            @*<aside class="widget widget_media_image">
+                <a href="#">
+                    <img src="/assets/img/content/placeholder_336.jpg" alt="">
+                </a>
+            </aside>*@
+
+            <aside class="widget widget-popular-posts">
+                <h3 class="widget-title">YENİLER</h3>
+                <ul class="post-list-small">
+
+                    @foreach (var item in @Model.RelatedNewsRightSmall)
+                    {
+                        string url = string.Format("/Haber/{0}", SeoURLUtility.Convert(item.ID, item.Title));
+                        
+                        <li class="post-list-small__item">
+                            <article class="post-list-small__entry clearfix">
+                                <div class="post-list-small__img-holder">
+                                    <div class="thumb-container thumb-100 related-small-thumb" style="background-image: url(@item.ImageURL)">
+                                        <img data-src="@item.ImageURL" src="@item.ImageURL" alt="@item.Title" class="d-none" />
+                                        <a href="@url" title="@item.Title" class="thumb-url"></a>
+                                    </div>
+                                </div>
+                                <div class="post-list-small__body">
+                                    <h3 class="post-list-small__entry-title">
+                                        <a href="@url">@item.Title</a>
+                                    </h3>
+                                    <ul class="entry__meta">
+                                        <li class="entry__meta-date">@item.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", Settings.TurkishCultureInfo)</li>
+                                    </ul>
+                                </div>
+                            </article>
+                        </li>
+                    }
+                </ul>
+            </aside>
+
+            @Html.Partial("Partial/_Subscribe")
+
+        </aside>
+        <!-- end sidebar -->
+
+    </div>
+    <!-- end content -->
+</div>
+<!-- end main container -->
+
+<input type="hidden" id="NewsID" value="@Model.News.ID" />
+<input type="hidden" id="CategoryID" value="@Model.News.CategoryID" />
+
+@section bottomJS{
+    <script src="/assets/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="/assets/content/js/generic.ajax.js"></script>
+    <script src="/assets/content/js/news.ajax.js"></script>
+    <script src="/assets/js/toastr.min.js"></script>
+    <script src="/assets/content/js/news.detail.js?v=5"></script>
+}

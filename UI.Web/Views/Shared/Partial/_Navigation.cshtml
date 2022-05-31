@@ -1,0 +1,45 @@
+﻿@using Sky.CMS.DTO
+
+@{
+    List<Navigation> NavigationList = ViewBag.NavigationList;
+}
+
+@helper displayNested(List<Navigation> list)
+{
+    var lastParent = list.Where(n => n.ChildrenList.Any()).LastOrDefault();
+    foreach (Navigation item in list)
+    {
+        if (item.IsDeleted)
+        {
+            continue;
+        }
+
+        if (item.ChildrenList.Any())
+        {
+            <li class="nav__dropdown @(lastParent == item ? "hidden-mobile" : "")">
+
+                <a href="@item.Link">@item.Title</a>
+
+                <ul class="nav__dropdown-menu">
+                    @foreach (var sub in item.ChildrenList)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            continue;
+                        }
+                        sub.IsDeleted = true;
+                        
+                        <li><a href="@sub.Link">@sub.Title</a></li>
+                    }
+                </ul>
+
+            </li>
+        }
+        else
+        {
+            <li><a href="@item.Link">@item.Title</a></li>
+        }
+    }
+}
+
+@displayNested(NavigationList)

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Sky.Newspaper</id>
+    <version>1.0.4</version>
+    <title>Sky.Newspaper</title>
+    <authors>Dixie7 Software Corporation</authors>
+    <owners>Dixie7 Software Corporation</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides Newspaper Services</description>
+    <releaseNotes>First release</releaseNotes>
+    <copyright>Copyright 2013 - 2021 Dixie7</copyright>
+    <tags>Newspaper</tags>
+    <dependencies>
+      <dependency id="Dapper" version="1.50.2" />
+      <dependency id="Sky.Common" />
+      <dependency id="Sky.Repository" />
+    </dependencies>
+  </metadata>
+</package>

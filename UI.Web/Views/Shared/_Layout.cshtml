@@ -1,0 +1,319 @@
+﻿@using Sky.Common.Utilities
+@using Sky.News.DTO
+
+<!DOCTYPE html>
+
+<html lang="tr">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <meta charset="utf-8">
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,600,700%7CSource+Sans+Pro:400,600,700?display=swap' rel='stylesheet'>
+
+    <!-- Css -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/font-icons.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="/assets/content/img/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/content/img/baloon-256x256.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/content/img/baloon-256x256.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/content/img/baloon-256x256.png">
+
+    <!-- Lazyload (must be placed in head in order to work) -->
+    <script src="/assets/js/lazysizes.min.js"></script>
+
+    <link href="/assets/content/css/common.css?v=3" rel="stylesheet" />
+
+    @RenderSection("head", false)
+</head>
+<body class="bg-light style-default style-rounded">
+    <div id="loaderProcess" class="loader2 loader2-ball" data-shadow></div>
+
+    <!-- Preloader -->
+    <div class="loader-mask">
+        <div class="loader">
+            <div></div>
+        </div>
+    </div>
+
+    <!-- Bg Overlay -->
+    <div class="content-overlay"></div>
+
+    <!-- Sidenav -->
+    <header class="sidenav" id="sidenav">
+
+        <!-- close -->
+        <div class="sidenav__close">
+            <button class="sidenav__close-button" id="sidenav__close-button" aria-label="close sidenav">
+                <i class="ui-close sidenav__close-icon"></i>
+            </button>
+        </div>
+
+        <!-- Nav -->
+        <nav class="sidenav__menu-container" style="display:none;">
+            <ul class="sidenav__menu">
+                @Html.Partial("Partial/_NavigationLeft")
+            </ul>
+        </nav>
+
+        <div class="socials sidenav__socials">
+            <a class="social social-facebook" href="https://www.facebook.com/bihaberver" target="_blank" aria-label="facebook" rel="noreferrer">
+                <i class="ui-facebook"></i>
+            </a>
+            <a class="social social-twitter" href="https://www.twitter.com/BirHaberVer" target="_blank" aria-label="twitter" rel="noreferrer">
+                <i class="ui-twitter"></i>
+            </a>
+            <a class="social social-instagram" href="https://www.instagram.com/bihaberver" target="_blank" aria-label="instagram" rel="noreferrer">
+                <i class="ui-instagram"></i>
+            </a>
+        </div>
+    </header>
+    <!-- end sidenav -->
+
+    <div class="main oh" id="main">
+
+        <!-- Top Bar -->
+        <div class="top-bar d-none d-lg-block">
+            <div class="container">
+                <div class="row">
+
+                    <!-- Top menu -->
+                    <div class="col-lg-6">
+                        <ul class="top-menu">
+                            <li><a href="/Hakkimizda">Hakkımızda</a></li>
+                            <li><a href="/Reklam-Ver">Reklam Ver</a></li>
+                            <li><a href="/Yazar-Ol">Yazar Ol</a></li>
+                            <li><a href="/Iletisim">İletişim</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Socials -->
+                    <div class="col-lg-6">
+                        <div class="socials nav__socials socials--nobase socials--white justify-content-end">
+                            <a class="social social-facebook" href="https://www.facebook.com/bihaberver" target="_blank" aria-label="facebook" rel="noreferrer">
+                                <i class="ui-facebook"></i>
+                            </a>
+                            <a class="social social-twitter" href="https://www.twitter.com/BirHaberVer" target="_blank" aria-label="twitter" rel="noreferrer">
+                                <i class="ui-twitter"></i>
+                            </a>
+                            <a class="social social-instagram" href="https://www.instagram.com/bihaberver" target="_blank" aria-label="instagram" rel="noreferrer">
+                                <i class="ui-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- end top bar -->
+
+        <!-- Navigation -->
+        <header class="nav">
+
+            <div class="nav__holder nav--sticky">
+                <div class="container relative height-100-percent">
+                    <div class="flex-parent height-100-percent">
+
+                        <!-- Side Menu Button -->
+                        <button class="nav-icon-toggle" id="nav-icon-toggle" aria-label="Open side menu" style="display: none;">
+                            <span class="nav-icon-toggle__box">
+                                <span class="nav-icon-toggle__inner"></span>
+                            </span>
+                        </button>
+
+                        <!-- Logo -->
+                        <a href="/" class="logo">
+                            <img class="logo__img" src="/assets/content/img/bihaberver-700x291.png" srcset="/assets/content/img/bihaberver-700x291.png 1x, /assets/content/img/bihaberver-700x291.png 2x" alt="Bi Haber Ver | Türkiye'nin Robotlarla Yönetilen İlk Haber Sitesi" style="width: 135px;" />
+                        </a>
+
+                        <!-- Nav-wrap -->
+                        <nav class="flex-child nav__wrap d-none d-lg-block">
+                            <ul class="nav__menu">
+
+                                @Html.Partial("Partial/_Navigation")
+
+                            </ul>
+                            <!-- end menu -->
+                        </nav>
+                        <!-- end nav-wrap -->
+
+                        <!-- Nav Right -->
+                        <div class="nav__right">
+
+                            <!-- Search -->
+                            <div class="nav__right-item nav__search">
+                                <a href="javascript:void(0);" class="nav__search-trigger" id="nav__search-trigger" title="Ara">
+                                    <i class="ui-search nav__search-trigger-icon"></i>
+                                </a>
+                                <div class="nav__search-box" id="nav__search-box">
+                                    <form class="nav__search-form" method="get" action="/Haber" onsubmit="return global.checkSearch(this)">
+                                        <input type="text" placeholder="Bi Haber Ara" name="q" id="query" class="nav__search-input" required="required" />
+                                        <button type="submit" class="search-button btn btn-lg btn-color btn-button">
+                                            <i class="ui-search nav__search-icon"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- end nav right -->
+
+                    </div>
+                    <!-- end flex-parent -->
+                </div>
+                <!-- end container -->
+
+            </div>
+        </header>
+        <!-- end navigation -->
+
+        <!-- Trending Now -->
+        <div class="container">
+            <div class="trending-now">
+                <span class="trending-now__label">
+                    <i class="ui-flash"></i>
+                    <span class="trending-now__text d-lg-inline-block d-none">SON DAKİKA</span>
+                </span>
+                <div class="newsticker">
+                    <ul class="newsticker__list">
+                        
+                    </ul>
+                </div>
+                <div class="newsticker-buttons">
+                    <button class="newsticker-button newsticker-button--prev" id="newsticker-button--prev" aria-label="next article"><i class="ui-arrow-left"></i></button>
+                    <button class="newsticker-button newsticker-button--next" id="newsticker-button--next" aria-label="previous article"><i class="ui-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        @RenderBody()
+
+        <!-- Footer -->
+        <footer class="footer footer--dark">
+            <div class="container">
+                <div class="footer__widgets">
+                    <div class="row">
+
+                        <div class="col-lg-3 col-md-6">
+                            <aside class="widget widget_nav_menu">
+                                <h4 class="widget-title">SİTE HARİTASI</h4>
+                                <ul>
+                                    <li><a href="/">Anasayfa</a></li>
+                                    <li><a href="/Hakkimizda">Hakkımızda</a></li>
+                                    <li><a href="/Reklam-Ver">Reklam Ver</a></li>
+                                    <li><a href="/Iletisim">İletişim</a></li>
+                                </ul>
+                            </aside>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <aside class="widget widget_nav_menu">
+                                <h4 class="widget-title">KATEGORİLER</h4>
+                                <ul>
+                                    <li><a href="/Haber/Kategori/turkiye/1">Türkiye</a></li>
+                                    <li><a href="/Haber/Kategori/dunya/2">Dünya</a></li>
+                                    <li><a href="/Haber/Kategori/gundem/3">Gündem</a></li>
+                                    <li><a href="/Haber/Kategori/ekonomi-finans/4">Ekonomi &amp; Finans</a></li>
+                                    <li><a href="/Haber/Kategori/politika/5">Politika</a></li>
+                                    <li><a href="/Haber/Kategori/spor/6">Spor</a></li>
+                                    <li><a href="/Haber/Kategori/kultur-sanat/7">Kültür &amp; Sanat</a></li>
+                                    <li><a href="/Haber/Kategori/saglik/8">Sağlık</a></li>
+                                    <li><a href="/Haber/Kategori/egitim/9">Eğitim</a></li>
+                                    <li><a href="/Haber/Kategori/magazin/10">Magazin</a></li>
+                                    <li><a href="/Haber/Kategori/teknoloji/11">Teknoloji</a></li>
+                                    <li><a href="/Haber/Kategori/otomobil/12">Otomobil</a></li>
+                                    <li><a href="/Haber/Kategori/moda/13">Moda</a></li>
+                                    <li><a href="/Haber/Kategori/kadin/14">Kadın</a></li>
+                                    <li><a href="/Haber/Kategori/mizah/15">Mizah</a></li>
+                                    <li><a href="/Haber/Kategori/seyahat/16">Seyahat</a></li>
+                                    <li><a href="/Haber/Kategori/yasam/17">Yaşam</a></li>
+                                    <li><a href="/Haber/Kategori/astroloji/18">Astroloji</a></li>
+                                    <li><a href="/Haber/Kategori/biyografi/19">Biyografi</a></li>
+                                </ul>
+                            </aside>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <aside class="widget widget_nav_menu">
+                                <h4 class="widget-title">KAYNAKLAR</h4>
+                                <ul>
+                                    <li><a href="/Haber/Kaynak/ntv/1">NTV</a></li>
+                                    <li><a href="/Haber/Kaynak/cnn/2">CNN</a></li>
+                                    <li><a href="/Haber/Kaynak/haberlercom/3">Haberler.com</a></li>
+                                    <li><a href="/Haber/Kaynak/takvim/4">Takvim</a></li>
+                                </ul>
+                            </aside>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <aside class="widget widget-logo">
+                                <h4 class="widget-title">Bİ TAKİP ET</h4>
+                                <div class="socials socials--large socials--rounded mb-24">
+                                    <a href="https://www.facebook.com/bihaberver" target="_blank" class="social social-facebook" aria-label="facebook" rel="noreferrer"><i class="ui-facebook"></i></a>
+                                    <a href="https://www.twitter.com/BirHaberVer" target="_blank" class="social social-twitter" aria-label="twitter" rel="noreferrer"><i class="ui-twitter"></i></a>
+                                    <a href="https://www.instagram.com/bihaberver" target="_blank" class="social social-instagram" aria-label="instagram" rel="noreferrer"><i class="ui-instagram"></i></a>
+                                </div>
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="text-center">© 2021  Bi Haber Ver</p>
+                </div>
+            </div>
+            <!-- end container -->
+        </footer>
+        <!-- end footer -->
+
+        <div id="back-to-top">
+            <a href="#top" aria-label="Go to top"><i class="ui-arrow-up"></i></a>
+        </div>
+
+    </div>
+
+    <!-- jQuery Scripts -->
+    <script src="/assets/js/jquery.min.js?v=1"></script>
+    <script src="/assets/js/bootstrap.min.js?v=1"></script>
+    <script src="/assets/js/easing.min.js"></script>
+    <script src="/assets/js/owl-carousel.min.js"></script>
+    <script src="/assets/js/flickity.pkgd.min.js"></script>
+    <script src="/assets/js/twitterFetcher_min.js"></script>
+    <script src="/assets/js/jquery.sticky-kit.min.js"></script>
+    <script src="/assets/js/jquery.newsTicker.min.js"></script>
+    <script src="/assets/js/modernizr.min.js"></script>
+    <script src="/assets/js/scripts.js?v=1"></script>
+    <script src="/assets/content/js/url.convertor.js?v=1"></script>
+    <script src="/assets/content/js/log.ajax.js"></script>
+    <script src="/assets/content/js/global.js?v=1"></script>
+
+    @RenderSection("bottomJS", false)
+
+    <script>
+        $(document).ready(function () {
+            global.getFlashNews();
+            Log.Navigation();
+        });
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161858032-1"></script>
+    <script>
+        if (navigator.userAgent.indexOf("Speed Insights") == -1) {
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-161858032-1');
+        }
+    </script>
+</body>
+</html>

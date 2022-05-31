@@ -1,0 +1,197 @@
+﻿@using UI.Web.Infrastructure
+@using Sky.Common.Utilities
+
+@model UI.Web.Models.News.NewsListModel
+
+@{
+    ViewBag.Title = Model.PageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section head{
+    <link href="/assets/css/toastr.min.css" rel="stylesheet" />
+    <link href="/assets/css/loader.css" rel="stylesheet" />
+}
+
+<div class="container">
+    <ul class="breadcrumbs">
+        <li class="breadcrumbs__item">
+            <a href="/" class="breadcrumbs__url">Anasayfa</a>
+        </li>
+        <li class="breadcrumbs__item breadcrumbs__item--current">
+            @Model.BreadCrumbTitle
+        </li>
+    </ul>
+</div>
+
+<div class="main-container container" id="main-container">
+
+    <!-- Content -->
+    <div class="row">
+        <!-- Posts -->
+        <div class="col-lg-8 blog__content mb-72">
+            <h1 class="page-title">@Model.PageTitle</h1>
+
+            @foreach (var item in Model.NewsList)
+            {
+                string url = string.Format("/Haber/{0}", SeoURLUtility.Convert(item.ID, item.Title));
+                string title = item.Title;
+                
+                <article class="entry card post-list">
+                    <div class="entry__img-holder post-list__img-holder card__img-holder" style="background-image: url(@item.ImageURL)">
+                        <a href="@url" class="thumb-url"></a>
+                        <img src="@item.ImageURL" alt="@title" class="entry__img d-none">
+                        <a href="/Haber/Kategori/@SeoURLUtility.Convert(item.CategoryID, item.CategoryName)" 
+                            class="entry__meta-category entry__meta-category--label entry__meta-category--align-in-corner entry__meta-category--blue">@item.CategoryName</a>
+                    </div>
+
+                    <div class="entry__body post-list__body card__body">
+                        <div class="entry__header">
+                            <h2 class="entry__title">
+                                <a href="@url">@title</a>
+                            </h2>
+                            <ul class="entry__meta">
+                                <li class="entry__meta-date">@item.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", Settings.TurkishCultureInfo)</li>
+                            </ul>
+                        </div>
+                        <div class="entry__excerpt">
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                string desc = item.Description.Length < 125 ? item.Description : item.Description.Substring(0, 124) + "...";
+                                <p>@Html.Raw(desc)</p>
+                            }
+                        </div>
+                    </div>
+                </article>
+            }
+
+            @if (Model.LasPaginas.Any())
+            {
+                <nav class="pagination">
+                    @foreach (var p in Model.LasPaginas)
+                    {
+                        if (p.IsFirst)
+                        {
+                            <a href="?sayfa=@p.Value" class="pagination__page go-to-page @(p.IsCurrent ? "pagination__page pagination__page--current" : "")">@p.Value</a>
+                        }
+                        else if (p.IsDot)
+                        {
+                            <a href="javascript:;" class="pagination__page">@p.Value</a>
+                        }
+                        else if (p.IsLast)
+                        {
+                            <a href="?sayfa=@p.Value" class="pagination__page go-to-page @(p.IsCurrent ? "pagination__page pagination__page--current" : "")">@p.Value</a>
+                        }
+                        else
+                        {
+                            <a href="?sayfa=@p.Value" class="pagination__page go-to-page @(p.IsCurrent ? "pagination__page pagination__page--current" : "")">@p.Value</a>
+                        }
+                    }
+                </nav>
+            }
+        </div>
+        <!-- end posts -->
+
+        <!-- Sidebar -->
+        <aside class="col-lg-4 sidebar sidebar--right">
+
+            <aside class="widget widget-rating-posts">
+                <h4 class="widget-title">ÖNE ÇIKANLAR</h4>
+
+                @{
+                    var firstRelatedForBig = Model.RelatedNewsRightBig.FirstOrDefault();
+                }
+                @foreach (var item in Model.RelatedNewsRightBig)
+                {
+                    string url = string.Format("/Haber/{0}", SeoURLUtility.Convert(item.ID, item.Title));
+                    string title = item.Title;
+                    
+                    <article class="entry">
+                        <div class="entry__img-holder">
+                            <a href="@url">
+                                <div class="thumb-container thumb-60">
+                                    <img data-src="@item.ImageURL" src="@item.ImageURL" class="entry__img lazyload" alt="@title" title="@title" />
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="entry__body">
+                            <div class="entry__header">
+
+                                <h2 class="entry__title">
+                                    <a href="@url">@title</a>
+                                </h2>
+                                <ul class="entry__meta">
+                                    <li class="entry__meta-date">@item.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", Settings.TurkishCultureInfo)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        @if (firstRelatedForBig == item)
+                        {
+                            <hr />
+                        }
+                    </article>
+                }
+
+            </aside>
+
+            <aside class="widget widget-popular-posts">
+                <h4 class="widget-title">YENİLER</h4>
+                <ul class="post-list-small">
+
+                    @foreach (var item in @Model.RelatedNewsRightSmall)
+                    {
+                        string url = string.Format("/Haber/{0}", SeoURLUtility.Convert(item.ID, item.Title));
+                        string title = item.Title;
+                        
+                        <li class="post-list-small__item">
+                            <article class="post-list-small__entry clearfix">
+                                <div class="post-list-small__img-holder">
+                                    <div class="thumb-container thumb-100 related-small-thumb" style="background-image: url(@item.ImageURL)">
+                                        <img data-src="@item.ImageURL" src="@item.ImageURL" alt="@title" class="d-none" />
+                                        <a href="@url" title="@title" class="thumb-url"></a>
+                                    </div>
+                                </div>
+                                <div class="post-list-small__body">
+                                    <h3 class="post-list-small__entry-title">
+                                        <a href="@url">@title</a>
+                                    </h3>
+                                    <ul class="entry__meta">
+                                        <li class="entry__meta-date">@item.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss", Settings.TurkishCultureInfo)</li>
+                                    </ul>
+                                </div>
+                            </article>
+                        </li>
+                    }
+                </ul>
+            </aside>
+
+            @Html.Partial("Partial/_Subscribe")
+
+            @*<aside class="widget widget_media_image sticky-col">
+                <a href="#">
+                    <img src="/assets/img/content/placeholder_336.jpg" alt="" class="entry__img">
+                </a>
+            </aside>*@
+
+        </aside>
+        <!-- end sidebar -->
+
+    </div>
+    <!-- end content -->
+</div>
+<!-- end main container -->
+
+
+@section bottomJS{
+    <script src="/assets/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="/assets/content/js/generic.ajax.js"></script>
+    <script src="/assets/js/toastr.min.js"></script>
+
+    <script>
+        $('.go-to-page').on('click', function () {
+            global.showLoader();
+        });
+    </script>
+}
